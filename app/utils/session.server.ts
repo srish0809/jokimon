@@ -16,7 +16,7 @@ export async function register({ password, username }: LoginForm) {
 }
 
 export async function login({ password, username }: LoginForm) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: { username },
   });
   if (!user) {
@@ -39,9 +39,6 @@ if (!sessionSecret) {
 const storage = createCookieSessionStorage({
   cookie: {
     name: "RJ_session",
-    // normally you want this to be `secure: true`
-    // but that doesn't work on localhost for Safari
-    // https://web.dev/when-to-use-local-https/
     secure: process.env.NODE_ENV === "production",
     secrets: [sessionSecret],
     sameSite: "lax",
@@ -75,6 +72,19 @@ export async function requireUserId(
     throw redirect(`/login?${searchParams}`);
   }
   return userId;
+}
+
+export async function requireJokeId(
+  request: Request,
+  redirectTo: string = new URL(request.url).pathname
+) {
+  const session = await getUserSession(request);
+  const jokeId = session.get("jokeId");
+  if (!jokeId || typeof jokeId !== "string") {
+    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    throw redirect(`/jokes?${searchParams}`);
+  }
+  return jokeId;
 }
 
 export async function getUser(request: Request) {

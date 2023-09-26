@@ -1,124 +1,15 @@
-import type {
-  ActionArgs,
-  LinksFunction,
-} from "@remix-run/node";
-import {
-  Link,
-  useActionData,
-  useSearchParams,
-} from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+import { Link, useActionData, useSearchParams } from "@remix-run/react";
 
 import stylesUrl from "~/styles/login.css";
-import { badRequest } from "~/utils/request.server";
-import {
-  createUserSession,
-  login,
-  register,
-} from "~/utils/session.server";
-import { prisma } from "../utils/db.server";
+
+import { loginAction } from "../controller/auth/login";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesUrl },
 ];
 
-function validateUsername(username: string) {
-  if (username.length < 3) {
-    return "Usernames must be at least 3 characters long";
-  }
-}
-
-function validatePassword(password: string) {
-  if (password.length < 6) {
-    return "Passwords must be at least 6 characters long";
-  }
-}
-
-function validateUrl(url: string) {
-  const urls = ["/jokes", "/", "https://remix.run"];
-  if (urls.includes(url)) {
-    return url;
-  }
-  return "/jokes";
-}
-
-export const action = async ({ request }: ActionArgs) => {
-  const form = await request.formData();
-  const loginType = form.get("loginType");
-  const password = form.get("password");
-  const username = form.get("username");
-  const redirectTo = validateUrl(
-    (form.get("redirectTo") as string) || "/jokes"
-  );
-  if (
-    typeof loginType !== "string" ||
-    typeof password !== "string" ||
-    typeof username !== "string"
-  ) {
-    return badRequest({
-      fieldErrors: null,
-      fields: null,
-      formError: "Form not submitted correctly.",
-    });
-  }
-
-  const fields = { loginType, password, username };
-  const fieldErrors = {
-    password: validatePassword(password),
-    username: validateUsername(username),
-  };
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return badRequest({
-      fieldErrors,
-      fields,
-      formError: null,
-    });
-  }
-
-  switch (loginType) {
-    case "login": {
-      const user = await login({ username, password });
-      console.log({ user });
-      if (!user) {
-        return badRequest({
-          fieldErrors: null,
-          fields,
-          formError:
-            "Username/Password combination is incorrect",
-        });
-      }
-      return createUserSession(user.id, redirectTo);
-    }
-    case "register": {
-      const userExists = await prisma.user.findFirst({
-        where: { username },
-      });
-      if (userExists) {
-        return badRequest({
-          fieldErrors: null,
-          fields,
-          formError: `User with username ${username} already exists`,
-        });
-      }
-      const user = await register({ username, password });
-      if (!user) {
-        return badRequest({
-          fieldErrors: null,
-          fields,
-          formError:
-            "Something went wrong trying to create a new user.",
-        });
-      }
-      return createUserSession(user.id, redirectTo);
-    }
-    default: {
-      return badRequest({
-        fieldErrors: null,
-        fields,
-        formError: "Login type invalid",
-      });
-    }
-  }
-};
+export const action = loginAction;
 
 export default function Login() {
   const actionData = useActionData<typeof action>();
@@ -131,14 +22,10 @@ export default function Login() {
           <input
             type="hidden"
             name="redirectTo"
-            value={
-              searchParams.get("redirectTo") ?? undefined
-            }
+            value={searchParams.get("redirectTo") ?? undefined}
           />
           <fieldset>
-            <legend className="sr-only">
-              Login or Register?
-            </legend>
+            <legend className="sr-only">Login or Register?</legend>
             <label>
               <input
                 type="radio"
@@ -156,10 +43,7 @@ export default function Login() {
                 type="radio"
                 name="loginType"
                 value="register"
-                defaultChecked={
-                  actionData?.fields?.loginType ===
-                  "register"
-                }
+                defaultChecked={actionData?.fields?.loginType === "register"}
               />{" "}
               Register
             </label>
@@ -171,13 +55,9 @@ export default function Login() {
               id="username-input"
               name="username"
               defaultValue={actionData?.fields?.username}
-              aria-invalid={Boolean(
-                actionData?.fieldErrors?.username
-              )}
+              aria-invalid={Boolean(actionData?.fieldErrors?.username)}
               aria-errormessage={
-                actionData?.fieldErrors?.username
-                  ? "username-error"
-                  : undefined
+                actionData?.fieldErrors?.username ? "username-error" : undefined
               }
             />
             {actionData?.fieldErrors?.username ? (
@@ -197,13 +77,9 @@ export default function Login() {
               name="password"
               type="password"
               defaultValue={actionData?.fields?.password}
-              aria-invalid={Boolean(
-                actionData?.fieldErrors?.password
-              )}
+              aria-invalid={Boolean(actionData?.fieldErrors?.password)}
               aria-errormessage={
-                actionData?.fieldErrors?.password
-                  ? "password-error"
-                  : undefined
+                actionData?.fieldErrors?.password ? "password-error" : undefined
               }
             />
             {actionData?.fieldErrors?.password ? (
@@ -218,10 +94,7 @@ export default function Login() {
           </div>
           <div id="form-error-message">
             {actionData?.formError ? (
-              <p
-                className="form-validation-error"
-                role="alert"
-              >
+              <p className="form-validation-error" role="alert">
                 {actionData.formError}
               </p>
             ) : null}
@@ -235,9 +108,6 @@ export default function Login() {
         <ul>
           <li>
             <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/jokes">Jokes</Link>
           </li>
         </ul>
       </div>

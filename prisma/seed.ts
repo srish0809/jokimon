@@ -5,24 +5,29 @@ async function seed() {
   const kody = await db.user.create({
     data: {
       username: "kody",
-      // this is a hashed version of "twixrox"
       passwordHash:
         "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
     },
   });
-  await Promise.all(
+  const jokes = await Promise.all(
     getJokes().map((joke) => {
       const data = { jokesterId: kody.id, ...joke };
       return db.joke.create({ data });
     })
   );
-}
 
+  const firstJoke = jokes[0];
+
+  const comment = await db.comment.create({
+    data: {
+      comment: "wow",
+      jokeId: firstJoke.id,
+    },
+  });
+}
 seed();
 
 function getJokes() {
-  // shout-out to https://icanhazdadjoke.com/
-
   return [
     {
       name: "Road worker",

@@ -9,12 +9,8 @@ export default function JokeRoute() {
     <div>
       <h4>Here's your hilarious joke:</h4>
       <p>{data.joke.content}</p>
-      <Link to=".">Your Joke name: "{data.joke.name}"</Link>
-      <br /> <br />
-      <Link to="edit" className="button">
-        Edit your joke
-      </Link>
-    
+      <Link to="update">Your Joke name: "{data.joke.name}"</Link>
+      <p>Comments on this joke are as follows:</p>
     </div>
   );
 }

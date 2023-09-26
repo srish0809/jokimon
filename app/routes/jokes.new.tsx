@@ -1,54 +1,8 @@
-import type { ActionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
 
-import { badRequest } from "~/utils/request.server";
-import { requireUserId } from "~/utils/session.server";
-import { prisma } from "../utils/db.server";
+import { newJokeAction } from "../controller/jokes/new";
 
-function validateJokeContent(content: string) {
-  if (content.length < 10) {
-    return "That joke is too short";
-  }
-}
-
-function validateJokeName(name: string) {
-  if (name.length < 3) {
-    return "That joke's name is too short";
-  }
-}
-
-export const action = async ({ request }: ActionArgs) => {
-  const userId = await requireUserId(request);
-  const form = await request.formData();
-  const content = form.get("content");
-  const name = form.get("name");
-  if (typeof content !== "string" || typeof name !== "string") {
-    return badRequest({
-      fieldErrors: null,
-      fields: null,
-      formError: "Form not submitted correctly.",
-    });
-  }
-
-  const fieldErrors = {
-    content: validateJokeContent(content),
-    name: validateJokeName(name),
-  };
-  const fields = { content, name };
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return badRequest({
-      fieldErrors,
-      fields,
-      formError: null,
-    });
-  }
-
-  const joke = await prisma.joke.create({
-    data: { ...fields, jokesterId: userId },
-  });
-  return redirect(`/jokes/${joke.id}`);
-};
+export const action = newJokeAction;
 
 export default function NewJokeRoute() {
   const actionData = useActionData<typeof action>();
