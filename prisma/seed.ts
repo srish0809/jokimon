@@ -11,21 +11,42 @@ async function seed() {
   });
   const jokes = await Promise.all(
     getJokes().map((joke) => {
-      const data = { jokesterId: kody.id, ...joke };
+      const data = { userId: kody.id, ...joke };
       return db.joke.create({ data });
     })
   );
-
   const firstJoke = jokes[0];
 
-  const comment = await db.comment.create({
-    data: {
-      comment: "wow",
-      jokeId: firstJoke.id,
-    },
-  });
+  const comment = await Promise.all(
+    getComments().map((c) => {
+      const data = { userId: kody.id, jokeId: firstJoke.id, ...c };
+      return db.comment.create({ data });
+    })
+  );
 }
 seed();
+function getComments() {
+  return [
+    {
+      comment: "wow, its too funny!!",
+    },
+    {
+      comment: "I can't stop laughing",
+    },
+    {
+      comment: "Ohh!! I cant resist myself from laughing",
+    },
+    {
+      comment: "hahahahhaahahahaaaaaaa",
+    },
+    {
+      comment: "Ohh my gosh",
+    },
+    {
+      comment: "jiggles and giggles",
+    },
+  ];
+}
 
 function getJokes() {
   return [

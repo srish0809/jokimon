@@ -1,6 +1,7 @@
-import { ActionArgs, LoaderArgs, json } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, json, redirect } from "@remix-run/node";
 import { prisma } from "../../utils/db.server";
 import { badRequest } from "../../utils/request.server";
+import { requireJokeId } from "../../utils/session.server";
 
 function validateJokeContent(content: string) {
   if (content.length < 10) {
@@ -15,16 +16,18 @@ function validateJokeName(name: string) {
 }
 
 export const editJokesLoader = async ({ params }: LoaderArgs) => {
-  const joke = await prisma.joke.findUnique({
+  const joke = await prisma.joke.findFirst({
     where: { id: params.jokeId },
   });
   if (!joke) {
     throw new Error("Joke not found");
   }
-  return json({ joke });
+  // return json("srashti");
+  return json(joke);
 };
 
-export const updateJokesAction = async ({ request }: ActionArgs) => {
+export const editJokesAction = async ({ request }: ActionArgs) => {
+  const jokeId=await requireJokeId(request);
   const form = await request.formData();
   const content = form.get("content");
   const name = form.get("name");
@@ -49,3 +52,5 @@ export const updateJokesAction = async ({ request }: ActionArgs) => {
     });
   }
 };
+
+

@@ -1,4 +1,4 @@
-import { LoaderArgs, json } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, json } from "@remix-run/node";
 import { prisma } from "../../utils/db.server";
 
 export const showJokesLoader = async ({ params }: LoaderArgs) => {
@@ -8,5 +8,11 @@ export const showJokesLoader = async ({ params }: LoaderArgs) => {
   if (!joke) {
     throw new Error("Joke not found");
   }
+
   return json({ joke });
+  
 };
+// export const editJokeAction = async ({ request }: ActionArgs) => {
+//   const form = await request.formData();
+//  return redirect(`/jokes/${joke.id/edit}`)
+//   }

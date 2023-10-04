@@ -5,6 +5,7 @@ export const loader = showJokesLoader;
 
 export default function JokeRoute() {
   const data = useLoaderData<typeof loader>();
+
   return (
     <div>
       <h4>Here's your hilarious joke:</h4>
@@ -13,8 +14,11 @@ export default function JokeRoute() {
       <br /> <br />
       <Link to="edit" className="button">
         Edit your joke
+      </Link>{" "}
+      <br /> <br />
+      <Link to="commemt" className="button">
+        comment on joke
       </Link>
-    
     </div>
   );
 }

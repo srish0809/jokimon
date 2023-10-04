@@ -61,6 +61,15 @@ export async function getUserId(request: Request) {
   return userId;
 }
 
+export async function getJokeId(request: Request) {
+  const session = await getUserSession(request);
+  const jokeId = session.get("jokeId");
+  if (!jokeId || typeof jokeId !== "string") {
+    return null;
+  }
+  return jokeId;
+}
+
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
@@ -114,9 +123,14 @@ export async function logout(request: Request) {
   });
 }
 
-export async function createUserSession(userId: string, redirectTo: string) {
+export async function createUserSession(
+  userId: string,
+  // jokeId: string,
+  redirectTo: string
+) {
   const session = await storage.getSession();
   session.set("userId", userId);
+  // session.set("jokeId", jokeId);
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await storage.commitSession(session),

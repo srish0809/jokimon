@@ -43,7 +43,7 @@ export const newJokeAction = async ({ request }: ActionArgs) => {
   }
 
   const joke = await prisma.joke.create({
-    data: { ...fields, jokesterId: userId },
+    data: { ...fields, userId: userId },
   });
   return redirect(`/jokes/${joke.id}`);
 };
