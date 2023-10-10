@@ -90,3 +90,19 @@
     flex-direction: column;
   }
 }
+.light-mode {
+  /* Light mode styles here */
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.dark-mode {
+  /* Dark mode styles here */
+  background-color: #121212;
+  color: #ffffff;
+}
+
+
+
+
+

@@ -1,7 +1,7 @@
 import type { LinksFunction } from "@remix-run/node";
+import { Scripts } from "@remix-run/react";
 import { Links, LiveReload, Outlet } from "@remix-run/react";
 import stylesheet from "~/styles/tailwind.css";
-
 import globalLargeStylesUrl from "~/styles/global-large.css";
 import globalMediumStylesUrl from "~/styles/global-medium.css";
 import globalStylesUrl from "~/styles/global.css";
@@ -33,6 +33,7 @@ export default function App() {
       </head>
       <body>
         <Outlet />
+        <Scripts />
         <LiveReload />
       </body>
     </html>

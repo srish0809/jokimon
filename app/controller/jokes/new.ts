@@ -21,6 +21,7 @@ export const newJokeAction = async ({ request }: ActionArgs) => {
   const form = await request.formData();
   const content = form.get("content");
   const name = form.get("name");
+  const category = form.get("category");
   if (typeof content !== "string" || typeof name !== "string") {
     return badRequest({
       fieldErrors: null,
@@ -33,7 +34,7 @@ export const newJokeAction = async ({ request }: ActionArgs) => {
     content: validateJokeContent(content),
     name: validateJokeName(name),
   };
-  const fields = { content, name };
+  const fields = { content, name, category };
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({
       fieldErrors,

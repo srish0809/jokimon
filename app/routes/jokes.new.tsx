@@ -1,6 +1,7 @@
 import { useActionData } from "@remix-run/react";
 
 import { newJokeAction } from "../controller/jokes/new";
+import { Category } from "@prisma/client";
 
 export const action = newJokeAction;
 
@@ -42,15 +43,24 @@ export default function NewJokeRoute() {
               }
             />
           </label>
-          {actionData?.fieldErrors?.content ? (
-            <p
-              className="form-validation-error"
-              id="content-error"
-              role="alert"
-            >
-              {actionData.fieldErrors.content}
-            </p>
-          ) : null}
+        </div>
+
+        {actionData?.fieldErrors?.content ? (
+          <p className="form-validation-error" id="content-error" role="alert">
+            {actionData.fieldErrors.content}
+          </p>
+        ) : null}
+        <div>
+          <label>
+            Category:{" "}
+            <select name="category">
+              {Object.values(Category).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <div>
           {actionData?.formError ? (
