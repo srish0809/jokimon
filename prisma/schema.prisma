@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Category {
+  Funny
+  Funnier
+  Funniest
+}
+
 model Joke {
   id        String    @id @default(uuid())
   userId    String
@@ -15,6 +21,7 @@ model Joke {
   updatedAt DateTime  @updatedAt
   name      String
   content   String
+  category  Category
   comment   Comment[]
 }
 

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Category, PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 async function seed() {
@@ -53,30 +53,37 @@ function getJokes() {
     {
       name: "Road worker",
       content: `I never wanted to believe that my Dad was stealing from his job as a road worker. But when I got home, all the signs were there.`,
+      category: "Funny" as Category,
     },
     {
       name: "Frisbee",
       content: `I was wondering why the frisbee was getting bigger, then it hit me.`,
+      category: "Funniest" as Category,
     },
     {
       name: "Trees",
       content: `Why do trees seem suspicious on sunny days? Dunno, they're just a bit shady.`,
+      category: "Funniest" as Category,
     },
     {
       name: "Skeletons",
       content: `Why don't skeletons ride roller coasters? They don't have the stomach for it.`,
+      category: "Funny" as Category,
     },
     {
       name: "Hippos",
       content: `Why don't you find hippopotamuses hiding in trees? They're really good at it.`,
+      category: "Funnier" as Category,
     },
     {
       name: "Dinner",
       content: `What did one plate say to the other plate? Dinner is on me!`,
+      category: "Funny" as Category,
     },
     {
       name: "Elevator",
       content: `My first time using an elevator was an uplifting experience. The second time let me down.`,
+      category: "Funny" as Category,
     },
   ];
 }
